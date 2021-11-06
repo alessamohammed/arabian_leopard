@@ -1,0 +1,1 @@
+export DATABASE_URL='postgresql://postgres:1122@localhost:5432/arabian_leopard'
