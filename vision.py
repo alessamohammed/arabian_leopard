@@ -1,69 +1,97 @@
+import base64
 import io
 import os
 from google.cloud import vision
+from PIL import Image
 
-# Imports the Google Cloud client library
 
 
-# Instantiates a client
-client = vision.ImageAnnotatorClient()
+def animal_type():
+    # Imports the Google Cloud client library
 
-# The name of the image file to annotate
-file_name = os.path.abspath('arabian4.jpg')
 
-# Loads the image into memory
-with io.open(file_name, 'rb') as image_file:
-    content = image_file.read()
+    # Instantiates a client
+    client = vision.ImageAnnotatorClient()
 
-image = vision.Image(content=content)
+    # The name of the image file to annotate
+    file_name = os.path.abspath('arabian5.jpg')
+    data = "data:image/jpeg;base64,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"
+    
+    filex=Image.open(io.BytesIO(base64.b64decode(data)))
+    # Loads the image into memory
+    with io.open(filex, 'rb') as image_file:
+        content = image_file.read()
 
-# Performs label detection on the image file
-response = client.label_detection(image=image)
-labels = response.label_annotations
+    
+    image = vision.Image(content=content)
 
-print (response)
+    # Performs label detection on the image file
+    response = client.label_detection(image=image)
+    labels = response.label_annotations
 
-Leopard_score=0
-BigCats_score=0
-Cheetah_score=0
-Jaguar_score=0
+    Leopard_score=0
+    BigCats_score=0
+    Cheetah_score=0
+    Jaguar_score=0
+    final_score=0
+    final_description =""
+    print('Labels:')
 
-print('Labels:')
-
-for label in labels:  
-    if label.description=="Leopard":
-        Leopard_score = label.score
-        Leopard_description = label.description
+    for label in labels:  
+        if label.description=="Leopard":
+            Leopard_score = label.score
+            Leopard_description = label.description
+            
+        if label.description=="Big cats":
+            BigCats_score = label.score
+            BigCats_description = label.description
+            
+        if label.description=="Cheetah":
+            Cheetah_score = label.score
+            Cheetah_description = label.description
         
-    if label.description=="Big cats":
-        BigCats_score = label.score
-        BigCats_description = label.description
-        
-    if label.description=="Cheetah":
-        Cheetah_score = label.score
-        Cheetah_description = label.description
-       
-    if label.description=="Jaguar":
-        Jaguar_score = label.score
-        Jaguar_description = label.description
-        
+        if label.description=="Jaguar":
+            Jaguar_score = label.score
+            Jaguar_description = label.description
+            
 
-if Leopard_score !=0:
-    print(Leopard_description)
-    print(Leopard_score)
+    if Leopard_score !=0:
+        final_description =Leopard_description
+        final_score=Leopard_score
 
 
-elif Cheetah_score !=0:
-    print(Cheetah_description)
-    print(Cheetah_score)
+    elif Cheetah_score !=0:
+        final_description =Cheetah_description
+        final_score =Cheetah_score
 
-elif BigCats_score !=0:
-    print(BigCats_description)
-    print(BigCats_score)
+    elif BigCats_score !=0:
+        final_description=BigCats_description
+        final_score=BigCats_score
 
-elif Jaguar_score !=0:
-    print(Jaguar_score)
-    print(Jaguar_description)
+    elif Jaguar_score !=0:
+        final_description=Jaguar_score
+        final_score=Jaguar_description
 
-else:
-    print("The leopard was not found")
+    else:
+        final_description="The leopard was not found"
+    
+    return(final_description,final_score)
+
+    
+
+def animal_count():
+    client = vision.ImageAnnotatorClient()
+
+    # The name of the image file to annotate
+    file_name = os.path.abspath('arabian4.jpg')
+
+    # Loads the image into memory
+    with io.open(file_name, 'rb') as image_file:
+        content = image_file.read()
+
+    image = vision.Image(content=content)
+
+    objects = client.object_localization(
+        image=image).localized_object_annotations
+
+    return len(objects)
