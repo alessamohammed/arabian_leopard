@@ -3,6 +3,7 @@ from typing import Text
 from flask.json import jsonify
 from sqlalchemy import Column, String, Integer, create_engine
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql.sqltypes import LargeBinary
 
 
 database_path = os.environ.get('DATABASE_URL')
@@ -54,13 +55,16 @@ class Picture(db.Model):
     id = Column(Integer, primary_key=True)
     date= Column(String)
     location=Column(String)
-    image=Column(String)
-
+    Image=Column(LargeBinary)
+    mimetype=Column(String)
+    name=Column(String)
  
-    def __init__(self, date, location, image):
-        self.date = date
-        self.location = location
-        self.image = image
+    def __init__(self, date, location, Image, mimetype, name):
+      self.date = date
+      self.location = location
+      self.image = Image
+      self.mimetype = mimetype
+      self.name = name
 
 
     def insert(self):
@@ -85,14 +89,12 @@ class Picture(db.Model):
 
 class Reservation(db.Model):
     __tablename__ = 'Reservation'
-
-
     id = Column(Integer, primary_key=True)
     name=Column(String)
     date= Column(String)
     location=Column(String)
 
- 
+
     def __init__(self, name, date, location):
         self.name= name
         self.date = date
@@ -101,14 +103,14 @@ class Reservation(db.Model):
     def insert(self):
         db.session.add(self)
         db.session.commit()
-    
+
     def update(self):
         db.session.commit()
 
     def delete(self):
         db.session.delete(self)
         db.session.commit()
-  
+
 
     def format(self):
       return {
@@ -116,4 +118,4 @@ class Reservation(db.Model):
           'name': self.name,
           'date': self.date,
           'image': self.image
-      }
+      } 
