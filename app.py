@@ -5,19 +5,9 @@ from flask_cors import CORS
 from models import setup_db
 from flask_migrate import Migrate
 from models import db, Leopard, Picture
-<<<<<<< Updated upstream
 from vision import animal_type
 from models import Reservation
 import cv2
-=======
-from vision import animal_type, animal_count
-from werkzeug.utils import secure_filename
-from datetime import datetime
-import base64
-from models import Reservation
-import cv2
-
->>>>>>> Stashed changes
 
 def create_app(test_config=None):
   # create and configure the app
@@ -35,8 +25,7 @@ def create_app(test_config=None):
         location=request.json['location']
         )
       
-      db.session.add(Reserv)
-      db.session.commit()
+      Reserv.insert()
 
       return jsonify({
       'success': True
@@ -70,63 +59,14 @@ def create_app(test_config=None):
     'count': ""
     })  
 
-<<<<<<< Updated upstream
-=======
-  @app.route('/upload', methods=['POST'])
-  def upload():
-    picture =request.files['pic']
-
-    if not picture:
-        return "no image was uploaded", 400
-
-    
-    picture.save(secure_filename(picture.name))
-    filename=picture.filename
-    mimetype = picture.mimetype
-    encodedimage=base64.b64encode(picture.read()) 
-    print(encodedimage)
-    img = Picture(date=datetime.now,location="",Image=encodedimage, mimetype=mimetype, name=filename)
-
-    db.session.add(img)
-    db.session.commit()
-
-    return "img has been uploaded", 200
-
-  @app.route('/<int:id>')
-  def get_img(id):
-    picture = Picture.query.filter_by(id=id).first()
-    
-    if not picture:
-        return 'Img Not Found!', 404
-
-    return Response(picture.Image, mimetype=picture.mimetype)  
-
-
-  @app.route("/Reserve", methods=["POST"], strict_slashes=False)
-  def make_Reservation():
-      Reserv = Reservation(
-        name=request.json['name'],
-        date=request.json['date'],
-        location=request.json['location']
-        )
-      Reserv.insert()
-      
-      return jsonify({
-      'success': True
-      })
-
->>>>>>> Stashed changes
   @app.route('/video', method=['GET'])
   def video():
     return Response(gen_frames(),mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
-<<<<<<< Updated upstream
 #Here add to this list of IP cameras' url, for later usages
   CamerasURL=[0]
 
-=======
->>>>>>> Stashed changes
   def gen_frames(url=0):
     cap=cv2.VideoCapture(url)
     while True:
@@ -140,10 +80,8 @@ def create_app(test_config=None):
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
     cap.release()
     cv2.destroyAllWindows()
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
+  
+  
   return app
 
 
