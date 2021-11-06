@@ -82,3 +82,38 @@ class Picture(db.Model):
           'location': self.location,
           'image': self.image
       }
+
+class Reservation(db.Model):
+    __tablename__ = 'Reservation'
+
+
+    id = Column(Integer, primary_key=True)
+    name=Column(String)
+    date= Column(String)
+    location=Column(String)
+
+ 
+    def __init__(self, name, date, location):
+        self.name= name
+        self.date = date
+        self.location = location
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+    
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+  
+
+    def format(self):
+      return {
+          'id': self.id,
+          'name': self.name,
+          'date': self.date,
+          'image': self.image
+      }

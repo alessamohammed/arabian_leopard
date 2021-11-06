@@ -6,6 +6,7 @@ from models import setup_db
 from flask_migrate import Migrate
 from models import db, Leopard, Picture
 from vision import animal_type
+from models import Reservation
 def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__)
@@ -13,6 +14,21 @@ def create_app(test_config=None):
   CORS(app)
 
   migrate = Migrate(app, db)
+
+  @app.route("/Reserve", methods=["POST"], strict_slashes=False)
+  def make_Reservation():
+      Reserv = Reservation(
+        name=request.json['name'],
+        date=request.json['date'],
+        location=request.json['location']
+        )
+      
+      db.session.add(Reserv)
+      db.session.commit()
+
+      return jsonify({
+      'success': True
+      })
 
   @app.after_request
   def after_request(response):
